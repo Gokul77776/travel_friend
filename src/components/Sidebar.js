@@ -12,12 +12,12 @@ export default function Sidebar() {
 
   const menuItems = [
     { href: `/profile/${userId}/main`, label: "Profile" },
-    { href: `/profile`, label: "View the updates" },
+    { href: `/profile/plans`, label: "View the updates" },
     { href: `/profile/${userId}/edit`, label: "Edit the profile" },
     // { href: "/settings", label: "Delete" },
     { href: `/profile/${userId}/post`, label: "Add post" },
-    { href: "/plan", label: "Add plan" },
-    { href: "/logout", label: "Logout" },
+    { href: `/profile/${userId}/plan`, label: "Add plan" },
+    { href: '/', label: "Logout" },
   ];
 
   return (

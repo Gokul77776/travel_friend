@@ -1,4 +1,3 @@
-// /util/upload.js
 import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
@@ -8,13 +7,20 @@ cloudinary.config({
 });
 
 export async function uploadToCloudinary(buffer, filename) {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream(
-      { resource_type: "auto", public_id: filename,timeout: 60000, },
-      (error, result) => {
-        if (error) return reject({ success: false, error });
-        resolve({ success: true, result });
-      }
-    ).end(buffer);
-  });
+  try {
+    const base64 = buffer.toString("base64");
+    const dataUri = `data:image/jpeg;base64,${base64}`;  
+
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: "plans",
+      public_id: filename,
+      resource_type: "image",
+      timeout: 60000,
+    });
+
+    return { success: true, result };
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    return { success: false, error };
+  }
 }

@@ -9,10 +9,22 @@ export async function POST(req) {
         await connectDB();
         const { email, password } = await req.json();
 
+        // Email validation regex
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        // Check if email or password is missing
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Email and password are required" },
                 { status: 400 }  
+            );
+        }
+
+        // Validate the email format
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { error: "Invalid email format" },
+                { status: 400 }
             );
         }
 

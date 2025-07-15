@@ -27,3 +27,33 @@
     animation: animate 25s linear infinite;
   }
 }
+
+/* boder aniamtion */
+@keyframes borderMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.border-animate {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.border-animate::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(to right, orange, white, orange);
+  background-size: 200% 200%;
+  animation: borderMove 6s linear infinite;
+  z-index: -1;
+  border-radius: inherit;
+  mask-image: linear-gradient(#fff 0 0);
+  -webkit-mask-image: linear-gradient(#fff 0 0);
+}

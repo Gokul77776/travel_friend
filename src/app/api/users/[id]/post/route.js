@@ -11,7 +11,7 @@ export async function POST(req, { params }) {
     const file = formData.get("image");
     const description = formData.get("description");
     const location = formData.get("location");
-    const { id } = params;
+    const { id } = await params;
 
     if (!file || !description || !location) {
       return NextResponse.json(
@@ -44,20 +44,7 @@ export async function POST(req, { params }) {
     });
 
     await newPost.save();
-
-    // ✅ Fetch the user who made the post
-    const poster = await User.findById(id);
-
-    if (!poster) {
-      return NextResponse.json(
-        { message: "Poster not found" },
-        { status: 404 }
-      );
-    }
-
-  
     
-
     return NextResponse.json(
       { message: "Post created successfully", post: newPost },
       { status: 201 }
@@ -70,7 +57,7 @@ export async function POST(req, { params }) {
 }
 
 
-// GET:  
+// GET 
 export async function GET(req, { params }) {
   try {
     const { id } = await params;

@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import UserProfile from "@/models/Profile";
 import connectDB from "@/util/db";
 
+
+// Post method for creating the profile
 export async function POST(req, { params }) { 
   try {
     await connectDB();
@@ -19,8 +21,9 @@ export async function POST(req, { params }) {
       return NextResponse.json(
         { message: "Profile already exists for this user" },
         { status: 400 }
-      );
-    }
+      );   
+    }  
+
     let imageUrl = null;
     if (file && typeof file === "object") {
       const bytes = await file.arrayBuffer();
@@ -29,7 +32,7 @@ export async function POST(req, { params }) {
 
       if (!uploadResult.success) {
         return NextResponse.json({ message: "Upload failed" }, { status: 500 });
-      }
+      }  
 
       imageUrl = uploadResult.result.secure_url;
     }
@@ -51,6 +54,8 @@ export async function POST(req, { params }) {
   }
 }
 
+
+// Get function for the user profile
 export async function GET(req,{params}){
   try {
       const {id} = await params;
@@ -63,5 +68,56 @@ export async function GET(req,{params}){
   } catch (error) {
       console.log(error);
       return NextResponse.json({message:"Internal server error"},{status:500});        
+  }
+}
+
+
+// Update method for user profile 
+export async function PATCH(req, { params }) {
+  try {
+    await connectDB();
+    const formData = await req.formData();
+    const file = formData.get("profileImage");
+    const bio = formData.get("bio");
+    const location = formData.get("location");
+    const dateOfBirth = formData.get("dateOfBirth");
+    const { id } = await params;
+
+    const existingProfile = await UserProfile.findOne({ user: id });
+    if (!existingProfile) {
+      return NextResponse.json(
+        { message: "Profile not found" },
+        { status: 404 }
+      );
+    }
+
+    let imageUrl = existingProfile.profileImage;
+    if (file && typeof file === "object" && file.size > 0) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const uploadResult = await uploadToCloudinary(buffer, file.name);
+
+      if (!uploadResult.success) {
+        return NextResponse.json({ message: "Upload failed" }, { status: 500 });
+      }
+
+      imageUrl = uploadResult.result.secure_url;
+    }
+
+    // Update fields
+    existingProfile.profileImage = imageUrl;
+    existingProfile.bio = bio || existingProfile.bio;
+    existingProfile.location = location || existingProfile.location;
+    existingProfile.dateOfBirth = dateOfBirth || existingProfile.dateOfBirth;
+
+    await existingProfile.save();
+
+    return NextResponse.json(
+      { message: "Profile updated successfully", profile: existingProfile },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Update error:", error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

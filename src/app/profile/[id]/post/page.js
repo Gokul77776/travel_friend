@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { useParams } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import BackgroundAnimation from '@/components/BackgroundAnimation'; // Adjust path if needed
 
-export default function CreatePost() {
+export default function Page() {
   const router = useRouter();
   const params = useParams();
   const userId = params.id;
@@ -55,8 +56,14 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full sm:w-1/2 lg:w-1/3 p-6 bg-white rounded-lg shadow-md border-2 border-orange-400">
+    <div className="relative h-screen w-screen flex items-center justify-center bg-gray-100 overflow-hidden">
+      {/* Background Animation */}
+      <div className="absolute top-0 left-0 w-screen h-screen z-0">
+        <BackgroundAnimation />
+      </div>
+
+      {/* Form Content */}
+      <div className="relative z-10 w-full h-full sm:w-1/2 lg:w-1/3 p-6 bg-white rounded-lg shadow-md border-2 border-orange-400 overflow-auto">
         <h2 className="text-2xl font-bold mb-4 text-center">Create a New Post</h2>
 
         <form onSubmit={handleSubmit} encType="multipart/form-data">

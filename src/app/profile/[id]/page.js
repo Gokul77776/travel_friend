@@ -1,10 +1,14 @@
 'use client';
 import { useState, useRef, useEffect } from "react";
 import { useParams } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+ 
 
-const ProfileForm = () => {
+export default function Page() {
   const params = useParams();
   const userId = params.id;
+  const router = useRouter();
   const fileInputRef = useRef(null);
 
   const [profileImage, setProfileImage] = useState(null);
@@ -67,6 +71,7 @@ const ProfileForm = () => {
       if (res.ok) {
         setMessage("Profile uploaded successfully!");
         alert("Profile uploaded successfully!");
+        router.push(`/profile/${userId}/main`);
       } else {
         setMessage(data.message || "Something went wrong");
       }
@@ -78,6 +83,7 @@ const ProfileForm = () => {
 
   return (
     <div className="w-full min-h-screen">
+   
       <div className="w-full h-50 bg-[var(--primary-color)] text-5xl text-center text-white flex items-center justify-center  ">
         {username ? `Welcome, ${username}` : ""}
       </div>
@@ -141,11 +147,13 @@ const ProfileForm = () => {
             Submit
           </button>
 
-          {message && <p className=" text-center text-green-600">{message}</p>}
+          {message && <p className=" text-center text-green-600">{message} <Link href="/signin" className="text-blue-500">
+                      Click here
+                    </Link> </p>}
         </div>
       </form>
     </div>
   );
 };
 
-export default ProfileForm;
+ 

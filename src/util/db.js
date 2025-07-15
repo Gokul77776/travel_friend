@@ -1,17 +1,24 @@
-import mongoose from "mongoose";
+ import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const connection = {};  
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI in the .env file");
-}
-
-const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) {
+async function connectDB() {
+  if (connection.isConnected) {
+    
     return;
   }
-  await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-  console.log("MongoDB Connected");
-};
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+       
+    });
+    connection.isConnected = db.connections[0].readyState;
+    console.log('New database connection established.'); 
+  } catch (error) {
+    console.error('Database connection error:', error);
+    
+    throw new Error('Failed to connect to database');
+  }
+}
 
 export default connectDB;

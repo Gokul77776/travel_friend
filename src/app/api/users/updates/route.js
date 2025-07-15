@@ -1,7 +1,7 @@
 
 
 
-import User from "@/models/User";
+import Plans from "@/models/Plan";
 import connectDB from "@/util/db";
 import { NextResponse } from "next/server";
 
@@ -10,10 +10,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         await connectDB();
-         const user = await User.find();    
-        user.forEach(user => 
-            console.log(user.email)
-        );
+         const user = await Plans.find();    
          return NextResponse.json(user,{message:"successfully fetched the data"},{status:200});
 
     } catch (error) {

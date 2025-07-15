@@ -3,6 +3,7 @@
 import Sidebar from "@/components/Sidebar";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 
 export default function Page() {
   const params = useParams();
@@ -25,8 +26,6 @@ export default function Page() {
         cache: "no-store",
       });
       const data = await res.json();
-      console.log(data);
-      
       setPosts(data.posts);
     };
 
@@ -35,6 +34,29 @@ export default function Page() {
       getPosts();
     }
   }, [userId]);
+
+  const handleDelete = async (postId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3000/api/users/${userId}/post/${postId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Post deleted successfully!");
+        // Remove the deleted post from UI
+        setPosts((prevPosts) => prevPosts.filter((p) => p._id !== postId));
+      } else {
+        alert(data.message || "Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="flex">
@@ -79,7 +101,7 @@ export default function Page() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <div key={post._id} className="bg-white rounded-lg shadow-md p-4">
+                <div key={post._id} className="bg-white rounded-lg shadow-md p-4 relative">
                   <img
                     src={post.image}
                     alt="Post"
@@ -87,6 +109,13 @@ export default function Page() {
                   />
                   <p className="text-gray-800 font-medium mb-2">{post.description}</p>
                   <p className="text-sm text-gray-600">📍 {post.location}</p>
+                  <button
+                    onClick={() => handleDelete(post._id)}
+                    className="absolute bottom-2 right-2 text-red-500 hover:text-red-700"
+                    title="Delete Post"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               ))}
             </div>
